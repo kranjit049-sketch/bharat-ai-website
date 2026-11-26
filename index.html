@@ -1,4 +1,87 @@
-<script>
+<!DOCTYPE html><html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHARAT AI</title><style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101827;
+  color: white;
+}
+
+header {
+  background: #17243a;
+  padding: 20px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  color: #42d9ff;
+}
+
+#chat {
+  height: calc(100vh - 155px);
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.message {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  max-width: 85%;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.bot {
+  background: #26364f;
+}
+
+.user {
+  background: #075985;
+  margin-left: auto;
+}
+
+.input-area {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: #17243a;
+}
+
+input {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+button {
+  background: #00bde9;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+</style></head><body><header>🇮🇳 BHARAT AI</header><div id="chat">
+  <div class="message bot">
+    नमस्ते! मैं BHARAT AI हूँ। आप मुझसे हिंदी या English में सवाल पूछ सकते हैं।
+  </div>
+</div><div class="input-area">
+  <input id="question" type="text" placeholder="अपना सवाल लिखें...">
+  <button onclick="sendMessage()">Send</button>
+</div><script>
 const API_URL = "https://provision-wearing-efficiency-mothers.trycloudflare.com";
 
 async function sendMessage() {
@@ -28,14 +111,10 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        question: question
-      })
+      body: JSON.stringify({question: question})
     });
 
-    if (!response.ok) {
-      throw new Error("Server Error");
-    }
+    if (!response.ok) throw new Error("Server Error");
 
     const data = await response.json();
     bot.textContent = data.answer;
@@ -46,4 +125,9 @@ async function sendMessage() {
 
   chat.scrollTop = chat.scrollHeight;
 }
-</script>
+
+document.getElementById("question").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") sendMessage();
+});
+</script></body>
+</html>
