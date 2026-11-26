@@ -1,139 +1,7 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BHARAT AI</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #101827;
-  color: white;
-}
-
-header {
-  padding: 20px;
-  text-align: center;
-  background: #17243a;
-  font-size: 25px;
-  font-weight: bold;
-}
-
-header span {
-  color: #38bdf8;
-}
-
-.container {
-  max-width: 650px;
-  margin: 35px auto;
-  padding: 15px;
-}
-
-.welcome {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.welcome h2 {
-  font-size: 27px;
-}
-
-.welcome p {
-  color: #aab8cc;
-}
-
-#chat {
-  height: 390px;
-  overflow-y: auto;
-  padding: 15px;
-  background: #17243a;
-  border-radius: 15px;
-}
-
-.message {
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 12px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-
-.user {
-  background: #075985;
-  margin-left: 35px;
-}
-
-.bot {
-  background: #26364d;
-  margin-right: 35px;
-}
-
-.input-area {
-  display: flex;
-  gap: 8px;
-  margin-top: 15px;
-}
-
-input {
-  flex: 1;
-  min-width: 0;
-  padding: 15px;
-  border: 0;
-  border-radius: 10px;
-  outline: none;
-}
-
-button {
-  border: 0;
-  padding: 14px 18px;
-  border-radius: 10px;
-  background: #0284c7;
-  color: white;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  color: #8090a8;
-  margin-top: 25px;
-}
-</style>
-</head>
-
-<body>
-
-<header>🇮🇳 BHARAT <span>AI</span></header>
-
-<div class="container">
-
-<div class="welcome">
-<h2>नमस्ते! मैं BHARAT AI हूँ।</h2>
-<p>मुझसे हिंदी या English में कुछ भी पूछें।</p>
-</div>
-
-<div id="chat">
-<div class="message bot">
-नमस्ते! मैं आपकी क्या मदद कर सकता हूँ?
-</div>
-</div>
-
-<div class="input-area">
-<input id="question" placeholder="अपना सवाल लिखें...">
-<button onclick="sendMessage()">Send</button>
-</div>
-
-<footer>BHARAT AI V1 • Made in India 🇮🇳</footer>
-
-</div>
-
 <script>
-function sendMessage() {
+const API_URL = "https://provision-wearing-efficiency-mothers.trycloudflare.com";
+
+async function sendMessage() {
   const input = document.getElementById("question");
   const chat = document.getElementById("chat");
   const question = input.value.trim();
@@ -145,15 +13,37 @@ function sendMessage() {
   user.textContent = question;
   chat.appendChild(user);
 
+  input.value = "";
+
   const bot = document.createElement("div");
   bot.className = "message bot";
-  bot.textContent = "अभी मेरा AI Backend कनेक्ट नहीं हुआ है।";
+  bot.textContent = "BHARAT AI सोच रहा है...";
   chat.appendChild(bot);
 
-  input.value = "";
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    const response = await fetch(API_URL + "/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        question: question
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Server Error");
+    }
+
+    const data = await response.json();
+    bot.textContent = data.answer;
+
+  } catch (error) {
+    bot.textContent = "माफ कीजिए! अभी BHARAT AI से कनेक्शन नहीं हो पा रहा है।";
+  }
+
   chat.scrollTop = chat.scrollHeight;
 }
 </script>
-
-</body>
-</html>
