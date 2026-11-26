@@ -1,133 +1,200 @@
-<!DOCTYPE html><html lang="hi">
+<!DOCTYPE html>
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BHARAT AI</title><style>
+<title>BHARAT AI</title>
+
+<style>
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #101827;
-  color: white;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #101522;
+    color: white;
 }
 
 header {
-  background: #17243a;
-  padding: 20px;
-  text-align: center;
-  font-size: 25px;
-  font-weight: bold;
-  color: #42d9ff;
+    text-align: center;
+    padding: 20px;
+    background: #192338;
+    border-bottom: 2px solid #ff9933;
+}
+
+header h1 {
+    margin: 0;
+    color: #ff9933;
+}
+
+header p {
+    color: #ccc;
+    font-size: 14px;
 }
 
 #chat {
-  height: calc(100vh - 155px);
-  overflow-y: auto;
-  padding: 15px;
+    max-width: 750px;
+    height: 65vh;
+    overflow-y: auto;
+    margin: 15px auto;
+    padding: 15px;
 }
 
 .message {
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 12px;
-  max-width: 85%;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.bot {
-  background: #26364f;
+    padding: 13px;
+    margin: 12px 0;
+    border-radius: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .user {
-  background: #075985;
-  margin-left: auto;
+    background: #234b79;
+    margin-left: 35px;
 }
 
-.input-area {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  background: #17243a;
+.bot {
+    background: #253044;
+    margin-right: 35px;
+}
+
+#input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: #192338;
 }
 
 input {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  outline: none;
+    flex: 1;
+    min-width: 0;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
 }
 
 button {
-  background: #00bde9;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #ff9933;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
 }
-</style></head><body><header>🇮🇳 BHARAT AI</header><div id="chat">
-  <div class="message bot">
-    नमस्ते! मैं BHARAT AI हूँ। आप मुझसे हिंदी या English में सवाल पूछ सकते हैं।
-  </div>
-</div><div class="input-area">
-  <input id="question" type="text" placeholder="अपना सवाल लिखें...">
-  <button onclick="sendMessage()">Send</button>
-</div><script>
-const API_URL = "CURRENT API URL:"https://provision-wearing-efficiency-mothers.trycloudflare.com";
+
+button:disabled {
+    opacity: 0.5;
+}
+
+@media(max-width: 500px) {
+    #chat {
+        height: 68vh;
+    }
+    button {
+        padding: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🇮🇳 BHARAT AI</h1>
+    <p>Your Hindi & English AI Assistant</p>
+</header>
+
+<div id="chat">
+    <div class="message bot">
+        नमस्ते! मैं BHARAT AI हूँ। आप मुझसे हिंदी या English में सवाल पूछ सकते हैं।
+    </div>
+</div>
+
+<div id="input-area">
+    <input
+        type="text"
+        id="question"
+        placeholder="अपना सवाल लिखें..."
+        autocomplete="off"
+    >
+    <button id="sendBtn" onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+const API_URL =
+"https://provision-wearing-efficiency-mothers.trycloudflare.com";
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("question");
+const sendBtn = document.getElementById("sendBtn");
+
+function addMessage(text, type) {
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+}
 
 async function sendMessage() {
-  const input = document.getElementById("question");
-  const chat = document.getElementById("chat");
-  const question = input.value.trim();
+    const question = input.value.trim();
 
-  if (!question) return;
+    if (!question || sendBtn.disabled) return;
 
-  const user = document.createElement("div");
-  user.className = "message user";
-  user.textContent = question;
-  chat.appendChild(user);
+    addMessage(question, "user");
+    input.value = "";
 
-  input.value = "";
+    sendBtn.disabled = true;
+    const loading = addMessage("BHARAT AI सोच रहा है...", "bot");
 
-  const bot = document.createElement("div");
-  bot.className = "message bot";
-  bot.textContent = "BHARAT AI सोच रहा है...";
-  chat.appendChild(bot);
+    try {
+        const response = await fetch(API_URL + "/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question: question
+            })
+        });
 
-  chat.scrollTop = chat.scrollHeight;
+        if (!response.ok) {
+            throw new Error("Server Error: " + response.status);
+        }
 
-  try {
-    const response = await fetch(API_URL + "/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({question: question})
-    });
+        const data = await response.json();
 
-    if (!response.ok) throw new Error("Server Error");
+        loading.textContent = data.answer || "कोई जवाब नहीं मिला।";
 
-    const data = await response.json();
-    bot.textContent = data.answer;
+    } catch (error) {
+        loading.textContent =
+            "माफ कीजिए! BHARAT AI Server से कनेक्शन नहीं हो पाया। कृपया बाद में कोशिश करें।";
 
-  } catch (error) {
-    bot.textContent = "माफ कीजिए! अभी BHARAT AI से कनेक्शन नहीं हो पा रहा है।";
-  }
+        console.error(error);
 
-  chat.scrollTop = chat.scrollHeight;
+    } finally {
+        sendBtn.disabled = false;
+        input.focus();
+    }
 }
 
-document.getElementById("question").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") sendMessage();
+input.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
 });
-</script></body>
+</script>
+
+</body>
 </html>
